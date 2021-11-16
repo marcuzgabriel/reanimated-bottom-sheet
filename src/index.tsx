@@ -9,6 +9,6 @@ if (!global.setImmediate) {
   global.setImmediate = setTimeout as any;
 }
 
-const App: React.FC = () => <ScrollViewWithSnapEffect />;
+const App: React.FC = () => <NoHardRerenderingEffect />;
 
 export default App;
