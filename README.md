@@ -1,3 +1,5 @@
+![TypeScript](https://badges.aleen42.com/src/typescript.svg)![React](https://badges.aleen42.com/src/react.svg)![Javascript](https://badges.aleen42.com/src/javascript.svg)
+
 ## BottomSheet with react-native-reanimated, react-native-gesture-handler and react-native-redash
 This library provide multiple components but most importantly the BottomSheet. The BottomSheet is highly customizable. Visit the homepage for example: https://marcuzgabriel.github.io/reanimated-bottom-sheet/
 
