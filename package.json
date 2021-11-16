@@ -120,9 +120,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marcuzgabriel/reanimated-bottom-sheet.git"
-  },
-  "publishConfig": {
-    "access": "restricted",
-    "registry":"https://npm.pkg.github.com/"
   }
 }
