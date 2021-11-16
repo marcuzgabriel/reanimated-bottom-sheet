@@ -1,12 +1,5 @@
-# [WIP] Reanimated-animation-library
-This library provides some nice animation features with the latest reanimated 2+ (hooks) approach. The library is suitable for all platforms: Web, Android and iOS. Maximum performance is achieved by using animation reactions and eliminating useState events. This library consists of a BottomSheet, an Appear animation, a Slider and a Morphing SVG Graph component.
-
-Please note that react-native-reanimated library has a bug when it comes to svg morphing on web which is currently being addressed: https://github.com/software-mansion/react-native-reanimated/issues/1951. An example on how to remove it from the BottomSheet until a fix is in place.
-```Javascript
-  <BottomSheet morphingArrow={{ isEnabled: Platform.OS !== 'web' }} />
-```
-
-Or fork the react-native-reanimated and integrate my solution noticed in the link.
+## BottomSheet with react-native-reanimated, react-native-gesture-handler and react-native-redash
+This library provide multiple components but most importantly the BottomSheet. The BottomSheet is highly customizable. Visit the homepage for examples: https://marcuzgabriel.github.io/reanimated-bottom-sheet/
 
 <details>
   <summary>Gifs</summary>
@@ -52,33 +45,6 @@ Or fork the react-native-reanimated and integrate my solution noticed in the lin
   | getCurrentConfigRequest(config) | function with callback | This function will provide the current configuration
   | onLayoutRequest(cardHeight) | function with callback | In some use cases the card height of the BottomSheet might become useful
 
-</details>
-<details>
-  <summary>Progress</summary>
-
-  ## Current progress
-
-- [x] ScrollViewKeyboardAvoid. Personally I have had troubles using the KeyboardAvoidView from react-native where I am limited to only use one behaviour. This approach uses two behaviours at the same time with reanimated. First it manipulates the translationY position so the content container floats above the keyboard. Secondly it changes the height of the content container so a nice scroll-to-focused-input gets triggered. Works out of the box. Where animations happens automatically on the native side. Multiple examples can be found in the project Example folder. Remember on Android you might need to change the keyboardAdjust settings so it works the same way as on iOS. I have examples from work on how to easily manipulate the android keyboardAdjust settings - just ping me.
-- [x] BottomSheet
-  - [x] Static event: When background content is not scrollable then the background content should not be snappable
-  - [x] Scroll arrows that appear / dissapear
-  - [x] Fading scroll edges for alle platforms
-  - [x] Drag resistance when using the snap effect
-  - [x] InputField component that accepts a unique id so no matter where the component is located then a nice scrollTo animation effect to the input field is achieved
-  - [x] If the background content is not scrollable but there is content hiding behind the card, then make the component snappable so the card will collapse if the user tries to do a scroll gesture on the background content
-  - [x] Morphing arrow that follows the Y axis animation of the card
-  - [x] Card is collapsable by either clicking, gesturing, overlapping from scroll to pan gesture or scrolling the background content
-  - [x] The card should be able to handle input fields. When an input field is pressed, then the keyboard should press the card upwards and a scrolling animation should scroll to the input field
-  - [x] Add a ScrollView component in a PanGestureHandler component
-  - [x] iOS + Android: Overlap from a scrolling gesture to a pan gesture by creating a scroll-to-top snapping effect
-  - [x] Basic animation features (scrolling and pan gesture event)
-  - [x] Header component
-  - [x] Content component
-  - [x] Footer component
-- [ ] Appear
-- [ ] Slider
-- [ ] Morphing SVG Graph
-- [ ] Unit tests
 </details>
 <details>
   <summary>Integration</summary>
