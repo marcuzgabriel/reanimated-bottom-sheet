@@ -109,7 +109,7 @@ const SnapEffect: React.FC<Props> = ({
     <View onLayout={onLayout}>
       <GestureHandlerRootView>
         <PanGestureHandler
-          enabled={disableSnapEffect ?? isSnapEffectActiveState}
+          enabled={disableSnapEffect ? false : isSnapEffectActiveState}
           onGestureEvent={gestureHandler}
         >
           <Animated.View style={animatedStyle}>{children}</Animated.View>
