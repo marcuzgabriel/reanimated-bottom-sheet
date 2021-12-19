@@ -1,4 +1,4 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useContext } from 'react';
 import { useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import Animated, { useAnimatedProps } from 'react-native-reanimated';
@@ -37,9 +37,9 @@ const MorphingArrow: React.FC<Props> = ({ snapPointBottom }) => {
   const { morphingArrow } = useContext(UserConfigurationContext);
   const { translationY } = useContext(ReusablePropsContext.bottomSheet);
 
-  const fill = useMemo(() => morphingArrow?.fill ?? 'white', [morphingArrow?.fill]);
-  const height = useMemo(() => STATIC_ARROW_HEIGHT, []);
-  const width = useMemo(() => STATIC_ARROW_WIDTH, []);
+  const fill = morphingArrow?.fill ?? 'white';
+  const height = STATIC_ARROW_HEIGHT;
+  const width = STATIC_ARROW_WIDTH;
 
   const animatedProps = useAnimatedProps(() => {
     const startX = windowWidth / 2;

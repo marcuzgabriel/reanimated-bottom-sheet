@@ -7,7 +7,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 import { onGestureHandlerSnapEffect, onSnappableReaction } from '../../worklets';
 
 interface Props {
@@ -101,9 +105,11 @@ const SnapEffect: React.FC<Props> = ({
 
   return (
     <View onLayout={onLayout}>
-      <PanGestureHandler enabled={isSnapEffectActiveState} onGestureEvent={gestureHandler}>
-        <Animated.View style={animatedStyle}>{children}</Animated.View>
-      </PanGestureHandler>
+      <GestureHandlerRootView>
+        <PanGestureHandler enabled={isSnapEffectActiveState} onGestureEvent={gestureHandler}>
+          <Animated.View style={animatedStyle}>{children}</Animated.View>
+        </PanGestureHandler>
+      </GestureHandlerRootView>
     </View>
   );
 };

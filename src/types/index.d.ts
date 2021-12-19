@@ -1,7 +1,8 @@
+import React from 'react';
 import { ScrollViewProps as ScrollViewNativeProps } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { GestureEvent, PanGestureHandlerEventPayload } from 'react-native-gesture-handler';
-import React from 'react';
+
 export interface ScrollArrows {
   isEnabled: boolean;
   fill?: string;
@@ -22,8 +23,21 @@ export interface FadingScrollEdges {
 export interface BottomSheetConfiguration {
   isBottomSheetInactive?: boolean;
   initializeBottomSheetAsClosed?: boolean;
-  contentResizeHeightTriggerOnFocusedInputField?: number;
-  contentResizeHeightOnFocusedInputField?: number;
+  smoothAppearance?: {
+    waitForContent: boolean;
+    emptyContentHeight?: number;
+  };
+  contentHeightWhenKeyboardIsVisible: {
+    takeUpAllAvailableSpace?: boolean;
+    resizeHeightTrigger?: number;
+    resizeHeight?: number;
+    offset?: number;
+    closeIcon?: {
+      topOffset?: number;
+      rightOffset?: number;
+      icon: () => React.ReactNode;
+    };
+  };
   snapEffectDirection?: Animated.SharedValue<string>;
   snapPointBottom: number;
   extraOffset?: number;
@@ -46,7 +60,7 @@ export interface BottomSheetConfiguration {
   scrollArrows?: ScrollArrows;
   extraSnapPointBottomOffset?: number;
   keyboardAvoidBottomMargin?: number;
-  maxHeight?: number;
+  maxHeightRatio?: number;
   header?: {
     height?: number;
   };
@@ -89,7 +103,8 @@ export interface OnScrollArrowAppearanceReaction {
   scrollY: Animated.SharedValue<number>;
   isInputFieldFocused: Animated.SharedValue<boolean>;
 }
-export interface ContextPropsBottomSheet extends Pick<ContextPropsKeyboard, 'isKeyboardVisible'> {
+export interface ContextPropsBottomSheet
+  extends Pick<ContextPropsKeyboard, 'isKeyboardVisible' | 'keyboardHeight'> {
   headerHeight: Animated.SharedValue<number>;
   footerHeight: Animated.SharedValue<number>;
   contentHeight: Animated.SharedValue<number>;
@@ -102,6 +117,7 @@ export interface ContextPropsBottomSheet extends Pick<ContextPropsKeyboard, 'isK
   translationY: Animated.SharedValue<number>;
   footerTranslationY: Animated.SharedValue<number>;
   scrollY: Animated.SharedValue<number>;
+  smoothAppearanceClock: Animated.SharedValue<number>;
   isScrollable: Animated.SharedValue<boolean>;
   isScrolledToTop: Animated.SharedValue<boolean>;
   isScrolledToEnd: Animated.SharedValue<boolean>;
@@ -136,7 +152,7 @@ export interface ContextPropsKeyboardAvoidingView {
   selectedInputFieldPositionY: Animated.SharedValue<number>;
 }
 
-/* NOTE: main driver for all types associated with ScrollView */
+/* NOTE: main type for all types associated with ScrollView */
 interface ScrollViewProps extends ScrollViewNativeProps {
   scrollViewRef?: React.ForwardedRef<Animated.ScrollView>;
   translationYValues?: Animated.SharedValue<number>[];
@@ -148,7 +164,6 @@ interface ScrollViewProps extends ScrollViewNativeProps {
   children: React.ReactNode;
   isKeyboardAvoidDisabled?: boolean;
   keyboardAvoidBottomMargin?: number;
-  contentResizeHeightTriggerOnFocusedInputField?: number;
   connectScrollViewMeasuresToAnimationValues?: Record<
     string,
     Animated.SharedValue<number | boolean | undefined>
@@ -175,7 +190,6 @@ export interface KeyboardAvoidingViewProviderProps
     | 'translationYValues'
     | 'onIsInputFieldFocusedRequest'
     | 'isKeyboardAvoidDisabled'
-    | 'contentResizeHeightTriggerOnFocusedInputField'
     | 'keyboardAvoidBottomMargin'
   > {
   contentHeight: Animated.SharedValue<number>;

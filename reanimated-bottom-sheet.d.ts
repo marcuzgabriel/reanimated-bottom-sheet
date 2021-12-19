@@ -26,8 +26,21 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
   export interface BottomSheetConfiguration {
     isBottomSheetInactive?: boolean;
     initializeBottomSheetAsClosed?: boolean;
-    contentResizeHeightTriggerOnFocusedInputField?: number;
-    contentResizeHeightOnFocusedInputField?: number;
+    smoothAppearance?: {
+      waitForContent: boolean;
+      emptyContentHeight?: number;
+    };
+    contentHeightWhenKeyboardIsVisible: {
+      takeUpAllAvailableSpace?: boolean;
+      resizeHeightTrigger?: number;
+      resizeHeight?: number;
+      offset?: number;
+      closeIcon?: {
+        topOffset?: number;
+        rightOffset?: number;
+        icon: () => React.ReactNode;
+      };
+    };
     snapEffectDirection?: Animated.SharedValue<string>;
     snapPointBottom: number;
     extraOffset?: number;
@@ -50,7 +63,7 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
     scrollArrows?: ScrollArrows;
     extraSnapPointBottomOffset?: number;
     keyboardAvoidBottomMargin?: number;
-    maxHeight?: number;
+    maxHeightRatio?: number;
     header?: {
       height?: number;
     };
@@ -106,6 +119,7 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
     translationY: Animated.SharedValue<number>;
     footerTranslationY: Animated.SharedValue<number>;
     scrollY: Animated.SharedValue<number>;
+    smoothAppearanceClock: Animated.SharedValue<number>;
     isScrollable: Animated.SharedValue<boolean>;
     isScrolledToTop: Animated.SharedValue<boolean>;
     isScrolledToEnd: Animated.SharedValue<boolean>;
@@ -141,8 +155,10 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
     selectedInputFieldPositionY: Animated.SharedValue<number>;
   }
 
-  /* NOTE: main driver for all types associated with ScrollView */
-  export interface ScrollViewProps extends ScrollViewNativeProps {
+  /* NOTE: main type for all types associated with ScrollView */
+  export interface ScrollViewProps
+    extends ScrollViewNativeProps,
+      Pick<BottomSheetConfiguration, 'contentHeightWhenKeyboardIsVisible'> {
     scrollViewRef?: React.ForwardedRef<Animated.ScrollView>;
     translationYValues?: Animated.SharedValue<number>[];
     fadingScrollEdges?: FadingScrollEdges;
@@ -153,10 +169,9 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
     children: React.ReactNode;
     isKeyboardAvoidDisabled?: boolean;
     keyboardAvoidBottomMargin?: number;
-    contentResizeHeightTriggerOnFocusedInputField?: number;
     connectScrollViewMeasuresToAnimationValues?: Record<
       string,
-      Animated.SharedValue<number | boolean>
+      Animated.SharedValue<number | boolean | undefined>
     >;
   }
 
@@ -180,7 +195,6 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
       | 'translationYValues'
       | 'onIsInputFieldFocusedRequest'
       | 'isKeyboardAvoidDisabled'
-      | 'contentResizeHeightTriggerOnFocusedInputField'
       | 'keyboardAvoidBottomMargin'
     > {
     contentHeight: Animated.SharedValue<number>;

@@ -1,7 +1,8 @@
-import React, { useMemo, useCallback, useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import styled from 'styled-components/native';
+import CloseIcon from './CloseIcon';
 import {
   CLOSE_CARD_BUTTON_HEIGHT,
   CLOSE_OPEN_CARD_BUTTON_HITSLOP,
@@ -24,6 +25,7 @@ const TouchableOpacity = styled.TouchableOpacity<{
   borderTopLeftRadius?: number;
   height: number;
 }>`
+  position: relative;
   display: flex;
   z-index: 2;
   background: transparent;
@@ -46,11 +48,12 @@ const MorphingArrowWrapper = styled.View<{ offset: number }>`
 const Wrapper = styled.View``;
 
 const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
-  const { headerComponent, header, morphingArrow } = useContext(UserConfigurationContext);
-  const { headerHeight } = useContext(ReusablePropsContext.bottomSheet);
+  const { headerComponent, header, morphingArrow, contentHeightWhenKeyboardIsVisible } =
+    useContext(UserConfigurationContext);
+  const { headerHeight, isKeyboardVisible } = useContext(ReusablePropsContext.bottomSheet);
 
-  const offset = useMemo(() => morphingArrow?.offset ?? MORPHING_ARROW_OFFSET, [morphingArrow]);
-  const height = useMemo(() => header?.height ?? HEADER_HEIGHT, [header]);
+  const offset = morphingArrow?.offset ?? MORPHING_ARROW_OFFSET;
+  const height = header?.height ?? HEADER_HEIGHT;
 
   const onLayout = useCallback(
     (e: LayoutChangeEvent): void => {
@@ -61,15 +64,33 @@ const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
     [headerHeight],
   );
 
+  const animatedStyleWhenKeyboardIsVisible = useAnimatedStyle(() => ({
+    transform: [{ scale: isKeyboardVisible?.value ? 1 : 0 }],
+  }));
+
+  const { takeUpAllAvailableSpace, closeIcon } = contentHeightWhenKeyboardIsVisible ?? {};
+  const hasCloseIcon = takeUpAllAvailableSpace && closeIcon;
+
+  const animatedStyleWhenKeyboardIsHidden = useAnimatedStyle(() => ({
+    transform: [{ scale: isKeyboardVisible?.value && hasCloseIcon ? 0 : 1 }],
+  }));
+
   return (
     <TouchableOpacity height={height} activeOpacity={1} hitSlop={HIT_SLOP} onPress={onPress}>
       <HitSlopAreaWrapper />
       <Wrapper onLayout={onLayout}>
-        {headerComponent ?? (
-          <MorphingArrowWrapper offset={offset}>
-            <MorphingArrow snapPointBottom={snapPointBottom} scrollY={scrollY} />
-          </MorphingArrowWrapper>
+        {hasCloseIcon && (
+          <Animated.View style={animatedStyleWhenKeyboardIsVisible}>
+            <CloseIcon onPress={onPress} />
+          </Animated.View>
         )}
+        <Animated.View style={animatedStyleWhenKeyboardIsHidden}>
+          {headerComponent ?? (
+            <MorphingArrowWrapper offset={offset}>
+              <MorphingArrow snapPointBottom={snapPointBottom} scrollY={scrollY} />
+            </MorphingArrowWrapper>
+          )}
+        </Animated.View>
       </Wrapper>
     </TouchableOpacity>
   );
