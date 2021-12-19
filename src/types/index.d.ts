@@ -197,3 +197,27 @@ export interface KeyboardAvoidingViewProviderProps
   isInputFieldFocused: Animated.SharedValue<boolean>;
   children: React.ReactNode;
 }
+
+export interface ScrollToPositionArgs {
+  animated: boolean;
+  y?: number;
+}
+
+export interface ScrollToPositionFunctions {
+  scrollToEnd?: (args: ScrollToPositionArgs) => void;
+  scrollTo?: (args: ScrollToPositionArgs) => void;
+}
+
+export interface ScrollToProps {
+  ref?: React.ForwardedRef<Animated.ScrollView> | any;
+  to: string;
+}
+
+export interface SnapEffectProps {
+  children: React.ReactNode;
+  cardHeight: Animated.SharedValue<number>;
+  snapEffectDirection: Animated.SharedValue<string>;
+  isScrollableOffset?: number;
+  isStaticOffset?: number;
+  disableSnapEffect?: boolean;
+}

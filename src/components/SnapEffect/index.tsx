@@ -20,6 +20,7 @@ interface Props {
   snapEffectDirection: Animated.SharedValue<string>;
   isScrollableOffset?: number;
   isStaticOffset?: number;
+  disableSnapEffect?: boolean;
 }
 
 interface AnimatedGHContext {
@@ -34,6 +35,7 @@ const SnapEffect: React.FC<Props> = ({
   cardHeight,
   isScrollableOffset,
   isStaticOffset,
+  disableSnapEffect,
   snapEffectDirection,
   children,
 }) => {
@@ -106,7 +108,10 @@ const SnapEffect: React.FC<Props> = ({
   return (
     <View onLayout={onLayout}>
       <GestureHandlerRootView>
-        <PanGestureHandler enabled={isSnapEffectActiveState} onGestureEvent={gestureHandler}>
+        <PanGestureHandler
+          enabled={disableSnapEffect ?? isSnapEffectActiveState}
+          onGestureEvent={gestureHandler}
+        >
           <Animated.View style={animatedStyle}>{children}</Animated.View>
         </PanGestureHandler>
       </GestureHandlerRootView>

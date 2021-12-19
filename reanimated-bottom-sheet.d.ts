@@ -4,7 +4,7 @@
 declare module '@marcuzgabriel/reanimated-bottom-sheet' {
   import React from 'react';
   import Animated from 'react-native-reanimated';
-  import { ScrollViewProps } from 'react-native';
+  import { ScrollViewProps as ScrollViewNativeProps } from 'react-native';
 
   export interface ScrollArrows {
     isEnabled: boolean;
@@ -203,6 +203,30 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
     children: React.ReactNode;
   }
 
+  export interface ScrollToPositionArgs {
+    animated: boolean;
+    y?: number;
+  }
+
+  export interface ScrollToPositionFunctions {
+    scrollToEnd?: (args: ScrollToPositionArgs) => void;
+    scrollTo?: (args: ScrollToPositionArgs) => void;
+  }
+
+  export interface ScrollToProps {
+    ref?: React.ForwardedRef<Animated.ScrollView> | any;
+    to: string;
+  }
+
+  export interface SnapEffectProps {
+    children: React.ReactNode;
+    cardHeight: Animated.SharedValue<number>;
+    snapEffectDirection: Animated.SharedValue<string>;
+    isScrollableOffset?: number;
+    isStaticOffset?: number;
+    disableSnapEffect?: boolean;
+  }
+
   // Helpers
   export function scrollToPosition<P extends ScrollToProps>({ ref, to }: P): void;
 
@@ -211,7 +235,7 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
   export function InputField<P extends InputFieldProps>(props: P): React.ReactElement<P>;
   export function SnapEffect<P extends SnapEffectProps>(props: P): React.ReactElement<P>;
   export function ScrollViewWithSnapEffect(): React.ReactElement;
-  export function ScrollViewKeyboardAvoid<P extends ScrollViewKeyboardAvoidProps>(
+  export function ScrollViewKeyboardAvoid<P extends ScrollViewProps>(
     props: P,
   ): React.ReactElement<P>;
 }
