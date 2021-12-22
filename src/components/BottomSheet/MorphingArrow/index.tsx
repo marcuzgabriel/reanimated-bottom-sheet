@@ -15,7 +15,7 @@ const EDGE_OFFSET = 5;
 
 const STATIC_ARROW_WIDTH = 100;
 const STATIC_ARROW_HEIGHT = 50;
-const MARGIN_TOP = 12;
+const MARGIN_TOP = 14;
 
 const Wrapper = styled.View`
   position: relative;
