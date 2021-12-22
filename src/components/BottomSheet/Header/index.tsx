@@ -26,11 +26,8 @@ interface Props {
 }
 
 const TouchableOpacity = styled.TouchableOpacity<{
-  borderTopRightRadius?: number;
-  borderTopLeftRadius?: number;
   height: number;
   safeAreaToContent?: number;
-  backgroundColor?: string;
 }>`
   position: absolute;
   display: flex;
@@ -104,14 +101,13 @@ const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
   return (
     <>
       <TouchableOpacity
-        backgroundColor={backgroundColor}
         safeAreaToContent={safeAreaToContent}
         height={height}
         activeOpacity={1}
         hitSlop={HIT_SLOP}
         onPress={onPress}
       />
-      <Wrapper onLayout={onLayout} height={height}>
+      <Wrapper onLayout={onLayout} height={height} backgroundColor={backgroundColor}>
         {hasCloseIcon && (
           <Animated.View style={animatedStyleWhenKeyboardIsVisible}>
             <CloseIcon onPress={onPress} />
@@ -125,7 +121,6 @@ const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
           )}
         </Animated.View>
       </Wrapper>
-
       {isWeb && <ShadowWrapper webBoxShadow={webBoxShadow} />}
     </>
   );
