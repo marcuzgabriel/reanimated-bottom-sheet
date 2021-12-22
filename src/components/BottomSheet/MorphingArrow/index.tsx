@@ -15,9 +15,11 @@ const EDGE_OFFSET = 5;
 
 const STATIC_ARROW_WIDTH = 100;
 const STATIC_ARROW_HEIGHT = 50;
+const MARGIN_TOP = 12;
 
 const Wrapper = styled.View`
   position: relative;
+  margin-top: ${MARGIN_TOP}px;
   width: 100%;
   height: 100%;
   justify-content: center;

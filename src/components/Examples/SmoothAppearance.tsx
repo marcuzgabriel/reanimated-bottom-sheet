@@ -91,6 +91,11 @@ const SmoothAppearance: React.FC = () => {
         </SnapEffect>
       </Animated.ScrollView>
       <BottomSheet
+        safeAreaToContent={16}
+        webBoxShadow={{
+          offset: -3,
+          opacity: 0.3,
+        }}
         smoothAppearance={{
           waitForContent: true,
           emptyContentHeight: 200,
@@ -112,7 +117,7 @@ const SmoothAppearance: React.FC = () => {
           offset: 30,
         }}
         fadingScrollEdges={{ isEnabled: false }}
-        morphingArrow={{ isEnabled: Platform.OS !== 'web', offset: 20 }}
+        morphingArrow={{ isEnabled: true, offset: 20 }}
         keyboardAvoidBottomMargin={isAndroid ? 16 : 0}
         snapEffectDirection={snapEffectDirection}
         snapPointBottom={HEADER_HEIGHT}
