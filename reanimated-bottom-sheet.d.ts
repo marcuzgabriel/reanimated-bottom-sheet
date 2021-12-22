@@ -76,6 +76,7 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
       isEnabled?: boolean;
       offset?: number;
       fill?: string;
+      marginTop?: number;
     };
     fadingScrollEdges?: FadingScrollEdges;
     outerScrollEvent?: {

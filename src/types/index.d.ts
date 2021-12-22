@@ -73,6 +73,7 @@ export interface BottomSheetConfiguration {
     isEnabled?: boolean;
     offset?: number;
     fill?: string;
+    marginTop?: number;
   };
   fadingScrollEdges?: FadingScrollEdges;
   outerScrollEvent?: {

@@ -66,7 +66,7 @@ const MorphingArrow: React.FC<Props> = ({ snapPointBottom }) => {
   }, [windowWidth]);
 
   return (
-    <Wrapper marginTop={morphingArrow?.offset}>
+    <Wrapper marginTop={morphingArrow?.marginTop}>
       {morphingArrow?.isEnabled ? (
         <Svg width="100%" height="100%">
           <AnimatedPath
