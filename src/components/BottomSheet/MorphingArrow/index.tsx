@@ -15,11 +15,11 @@ const EDGE_OFFSET = 5;
 
 const STATIC_ARROW_WIDTH = 100;
 const STATIC_ARROW_HEIGHT = 50;
-const MARGIN_TOP = 14;
+const MARGIN_TOP = 16;
 
-const Wrapper = styled.View`
+const Wrapper = styled.View<{ marginTop?: number }>`
   position: relative;
-  margin-top: ${MARGIN_TOP}px;
+  margin-top: ${({ marginTop }): number => marginTop ?? MARGIN_TOP}px;
   width: 100%;
   height: 100%;
   justify-content: center;
@@ -66,7 +66,7 @@ const MorphingArrow: React.FC<Props> = ({ snapPointBottom }) => {
   }, [windowWidth]);
 
   return (
-    <Wrapper>
+    <Wrapper marginTop={morphingArrow?.offset}>
       {morphingArrow?.isEnabled ? (
         <Svg width="100%" height="100%">
           <AnimatedPath
