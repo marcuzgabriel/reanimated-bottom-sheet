@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { AnimatedStyleProp } from 'react-native-reanimated';
 
 /* Borders will always be defined either by user config or
 default based on the provider. The interface concerning
@@ -16,7 +16,7 @@ export const getAnimatedCardStyles = ({
   borderTopLeftRadius,
   borderTopRightRadius,
   backgroundColor,
-}: Props): Animated.AnimatedStyleProp<Record<string, unknown>> => {
+}: Props): AnimatedStyleProp<Record<string, unknown>> => {
   'worklet';
 
   return Platform.OS === 'ios'

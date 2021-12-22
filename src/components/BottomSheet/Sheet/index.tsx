@@ -2,6 +2,7 @@ import React, { useRef, useContext, useCallback } from 'react';
 import { LayoutChangeEvent, ViewStyle, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import Animated, {
+  AnimatedStyleProp,
   useSharedValue,
   useAnimatedStyle,
   useAnimatedReaction,
@@ -285,7 +286,7 @@ const Sheet: React.FC = () => {
   );
 
   const animatedBottomSheetStyle = useAnimatedStyle(
-    (): Animated.AnimatedStyleProp<ViewStyle> =>
+    (): AnimatedStyleProp<ViewStyle> =>
       getAnimatedCardStyles({
         translationY: hasSmoothAppearance
           ? interpolate(
@@ -304,7 +305,7 @@ const Sheet: React.FC = () => {
     zIndex: 1,
   }));
 
-  const animatedContentStyle = useAnimatedStyle((): Animated.AnimatedStyleProp<ViewStyle> => {
+  const animatedContentStyle = useAnimatedStyle((): AnimatedStyleProp<ViewStyle> => {
     if (hideContentOnCardCollapse?.isEnabled) {
       return {
         opacity: interpolate(
