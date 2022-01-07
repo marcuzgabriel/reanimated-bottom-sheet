@@ -20,8 +20,7 @@ This library provide multiple components but most importantly the BottomSheet. T
 | :--- | :---: | :---:|
   | isBottomSheetInactive | boolean | Set the bottom to an inactive state. Can be used for async handling og UX requirements
   | initializeBottomSheetAsClosed | boolean | In some cases it might be relevant to show the background content before showing the bottomSheet
-  | contentResizeHeightTriggerOnFocusedInputField | number | At which content height should a resize in content height occour when the input field is focused?
-  | contentResizeHeightOnFocusedInputField | number | If contentResizeHeightTriggerOnFocusedInputField is met what should be the new content height size when input field is focused?
+  | contentHeightWhenKeyboardIsVisible = { takeUpAllAvailableSpace?: boolean; resizeHeightTrigger?: number; resizeHeight?: number; offset?: number } | object | manipulate the content height when keyboard is visible
   | snapEffectDirection | Animated.SharedValue<string> | Used together with SnapEffect component. It tells the BottomSheet how to react to the effect. Please look in examples for more information
   | snapPointBottom* | number | This prop is required for the BottomSheet to work
   | extraOffset | number | If you need some extra offset when it comes to the panning event hitting the footer
@@ -47,6 +46,34 @@ This library provide multiple components but most importantly the BottomSheet. T
   | getCurrentConfigRequest(config) | function with callback | This function will provide the current configuration
   | onLayoutRequest(cardHeight) | function with callback | In some use cases the card height of the BottomSheet might become useful
 
+</details>
+<details>
+  <summary>Progress</summary>
+
+  ## Current progress
+
+- [x] ScrollViewKeyboardAvoid. Personally I have had troubles using the KeyboardAvoidView from react-native where I am limited to only use one behaviour. This approach uses two behaviours at the same time with reanimated. First it manipulates the translationY position so the content container floats above the keyboard. Secondly it changes the height of the content container so a nice scroll-to-focused-input gets triggered. A minimum requirement for this approach to work is to use this library's ```<InputField />```. Multiple examples can be found in the project Example folder.
+- [x] InputField. This is a component that is connected to the above ScrollViewKeyboardAvoid. When focused and the minimum requirements for ScrollViewKeyboardAvoid is met, then a smooth scroll-to-focused-input field event will trigger.
+- [x] BottomSheet
+  - [x] Static event: When background content is not scrollable then the background content should not be snappable
+  - [x] Scroll arrows that appear / dissapear
+  - [x] Fading scroll edges for alle platforms
+  - [x] Drag resistance when using the snap effect
+  - [x] InputField component that accepts a unique id so no matter where the component is located then a nice scrollTo animation effect to the input field is achieved
+  - [x] If the background content is not scrollable but there is content hiding behind the card, then make the component snappable so the card will collapse if the user tries to do a scroll gesture on the background content
+  - [x] Morphing arrow that follows the Y axis animation of the card
+  - [x] Card is collapsable by either clicking, gesturing, overlapping from scroll to pan gesture or scrolling the background content
+  - [x] The card should be able to handle input fields. When an input field is pressed, then the keyboard should press the card upwards and a scrolling animation should scroll to the input field
+  - [x] Add a ScrollView component in a PanGestureHandler component
+  - [x] iOS + Android: Overlap from a scrolling gesture to a pan gesture by creating a scroll-to-top snapping effect
+  - [x] Basic animation features (scrolling and pan gesture event)
+  - [x] Header component
+  - [x] Content component
+  - [x] Footer component
+- [ ] Appear
+- [ ] Slider
+- [ ] Morphing SVG Graph
+- [ ] Unit tests
 </details>
 <details>
   <summary>Integration</summary>

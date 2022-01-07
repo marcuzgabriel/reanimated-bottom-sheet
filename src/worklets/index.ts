@@ -10,3 +10,5 @@ export { onScrollArrowAppearanceReaction } from './onScrollArrowAppearanceReacti
 export { onInitializationCloseRequest } from './onInitializationCloseRequest';
 export { onScrollGetScrollingMeasures } from './onScrollGetScrollingMeasures';
 export { onSnapHideContentOrFooterReaction } from './onSnapHideContentOrFooterReaction';
+export { onOpenOrCloseCardRequest } from './onOpenOrCloseCardRequest';
+export { onRenderSmoothAppearance } from './onRenderSmoothAppearance';

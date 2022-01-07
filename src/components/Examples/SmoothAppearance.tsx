@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import Animated, {
@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Content from './components/Content';
 import Footer from './components/Footer';
-import BottomSheet from '../../components/BottomSheet';
+import BottomSheet from '../BottomSheet';
 import SnapEffect from '../SnapEffect';
 
 const HEADER_HEIGHT = 70;
@@ -52,7 +52,8 @@ const FakeContentWrapper = styled.View<{ windowHeight: number }>`
   padding: 32px 16px;
 `;
 
-const ScrollViewWithSnapEffect: React.FC = () => {
+const SmoothAppearance: React.FC = () => {
+  const [isReadytToRenderContent, setIsReadytToRenderContent] = useState(false);
   const scrollViewRef = useAnimatedRef<Animated.ScrollView>();
   const scrollY = useSharedValue(0);
   const cardHeight = useSharedValue(0);
@@ -65,6 +66,12 @@ const ScrollViewWithSnapEffect: React.FC = () => {
       scrollY.value = e.contentOffset.y;
     },
   });
+
+  useEffect(() => {
+    if (!isReadytToRenderContent) {
+      setIsReadytToRenderContent(true);
+    }
+  }, [isReadytToRenderContent]);
 
   return (
     <Wrapper windowHeight={windowHeight}>
@@ -84,6 +91,15 @@ const ScrollViewWithSnapEffect: React.FC = () => {
         </SnapEffect>
       </Animated.ScrollView>
       <BottomSheet
+        safeAreaToContent={16}
+        webBoxShadow={{
+          offset: -3,
+          opacity: 0.3,
+        }}
+        smoothAppearance={{
+          waitForContent: true,
+          emptyContentHeight: 200,
+        }}
         outerScrollEvent={{
           scrollY,
           autoScrollTriggerLength: 16,
@@ -101,18 +117,18 @@ const ScrollViewWithSnapEffect: React.FC = () => {
           offset: 30,
         }}
         fadingScrollEdges={{ isEnabled: false }}
-        morphingArrow={{ isEnabled: Platform.OS !== 'web', offset: 20 }}
+        morphingArrow={{ isEnabled: true, offset: 20 }}
         keyboardAvoidBottomMargin={isAndroid ? 16 : 0}
         snapEffectDirection={snapEffectDirection}
         snapPointBottom={HEADER_HEIGHT}
         onLayoutRequest={(height: number): void => {
           cardHeight.value = height;
         }}
-        contentComponent={<Content />}
         footerComponent={<Footer />}
+        contentComponent={isReadytToRenderContent ? <Content /> : null}
       />
     </Wrapper>
   );
 };
 
-export default ScrollViewWithSnapEffect;
+export default SmoothAppearance;
