@@ -9,15 +9,15 @@ import {
   DEFAULT_BORDER_RADIUS,
   MORPHING_ARROW_OFFSET,
   HEADER_HEIGHT,
-  HIT_SLOP,
 } from '../../../constants/styles';
 import MorphingArrow from '../../../components/BottomSheet/MorphingArrow';
 import { ReusablePropsContext } from '../../../containers/ReusablePropsProvider';
 import { UserConfigurationContext } from '../../../containers/UserConfigurationProvider';
-import type { BottomSheetConfiguration } from '../../../types';
 
 const isWeb = Platform.OS === 'web';
 const SHADOW_WRAPPER_HEIGHT = 16;
+const SHADOW_WRAPPER_OPACITY = 0.65;
+const SHADOW_WRAPPER_OFFSET = 10;
 
 interface Props {
   snapPointBottom: Animated.SharedValue<number>;
@@ -27,13 +27,13 @@ interface Props {
 
 const TouchableOpacity = styled.TouchableOpacity<{
   height: number;
-  safeAreaToContent?: number;
+  pressableSafeAreaToContent?: number;
 }>`
   position: absolute;
   display: flex;
   width: 100%;
   z-index: 2;
-  top: -${({ safeAreaToContent }): number => safeAreaToContent ?? CLOSE_OPEN_CARD_BUTTON_HITSLOP}px;
+  top: -${({ pressableSafeAreaToContent }): number => pressableSafeAreaToContent ?? CLOSE_OPEN_CARD_BUTTON_HITSLOP}px;
   height: ${({ height }): number => height}px;
   background-color: transparent;
 `;
@@ -44,15 +44,14 @@ const MorphingArrowWrapper = styled.View<{ offset: number }>`
   top: ${({ offset }): string => `-${offset}`}px;
 `;
 
-const ShadowWrapper = styled.View<{ webBoxShadow: BottomSheetConfiguration['webBoxShadow'] }>`
+const ShadowWrapper = styled.View<{ boxShadow: string }>`
   position: absolute;
   z-index: -1;
   width: 100%;
   height: ${SHADOW_WRAPPER_HEIGHT}px;
   border-top-right-radius: ${DEFAULT_BORDER_RADIUS}px;
   border-top-left-radius: ${DEFAULT_BORDER_RADIUS}px;
-  top: ${({ webBoxShadow }): number => webBoxShadow?.offset ?? -3}px;
-  background-color: rgba(0, 0, 0, ${({ webBoxShadow }): number => webBoxShadow?.opacity ?? 0.25});
+  box-shadow: ${({ boxShadow }): string => boxShadow};
 `;
 
 const Wrapper = styled.View<{ height: number; backgroundColor?: string }>`
@@ -71,12 +70,18 @@ const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
     morphingArrow,
     contentHeightWhenKeyboardIsVisible,
     webBoxShadow,
-    safeAreaToContent,
+    pressableSafeAreaToContent,
   } = useContext(UserConfigurationContext);
   const { headerHeight, isKeyboardVisible } = useContext(ReusablePropsContext.bottomSheet);
 
   const offset = morphingArrow?.offset ?? MORPHING_ARROW_OFFSET;
   const height = header?.height ?? HEADER_HEIGHT;
+  const shadowOffset = webBoxShadow?.offset ?? SHADOW_WRAPPER_OFFSET;
+  const shadowOpacity = webBoxShadow?.opacity ?? SHADOW_WRAPPER_OPACITY;
+  const boxShadow =
+    Object.keys(webBoxShadow ?? {}).length > 0
+      ? `0px 3px ${shadowOffset}px rgba(0, 0, 0, ${shadowOpacity})`
+      : 'none';
 
   const onLayout = useCallback(
     (e: LayoutChangeEvent): void => {
@@ -101,10 +106,9 @@ const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
   return (
     <>
       <TouchableOpacity
-        safeAreaToContent={safeAreaToContent}
+        pressableSafeAreaToContent={pressableSafeAreaToContent}
         height={height}
         activeOpacity={1}
-        hitSlop={HIT_SLOP}
         onPress={onPress}
       />
       <Wrapper onLayout={onLayout} height={height} backgroundColor={backgroundColor}>
@@ -121,7 +125,7 @@ const Header: React.FC<Props> = ({ snapPointBottom, scrollY, onPress }) => {
           )}
         </Animated.View>
       </Wrapper>
-      {isWeb && <ShadowWrapper webBoxShadow={webBoxShadow} />}
+      {isWeb && <ShadowWrapper boxShadow={boxShadow} />}
     </>
   );
 };

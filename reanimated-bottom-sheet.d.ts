@@ -26,7 +26,7 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
   export interface BottomSheetConfiguration {
     isBottomSheetInactive?: boolean;
     initializeBottomSheetAsClosed?: boolean;
-    safeAreaToContent?: number;
+    pressableSafeAreaToContent?: number;
     webBoxShadow?: {
       offset: number;
       opacity: number;

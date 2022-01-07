@@ -23,7 +23,7 @@ export interface FadingScrollEdges {
 export interface BottomSheetConfiguration {
   isBottomSheetInactive?: boolean;
   initializeBottomSheetAsClosed?: boolean;
-  safeAreaToContent?: number;
+  pressableSafeAreaToContent?: number;
   webBoxShadow?: {
     offset: number;
     opacity: number;

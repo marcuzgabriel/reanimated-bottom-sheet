@@ -18,6 +18,8 @@ This library provide multiple components but most importantly the BottomSheet. T
 
   | Prop | Type | Description |
 | :--- | :---: | :---:|
+  | pressableSafeAreaToContent | number | Stronger handling for controlling safe area to content so a press event on the BottomSheet do not interfer with the content within the BottomSheet
+  | webBoxShadow?: { offset: number; opacity: number } | object | Set a box shadow for web
   | isBottomSheetInactive | boolean | Set the bottom to an inactive state. Can be used for async handling og UX requirements
   | initializeBottomSheetAsClosed | boolean | In some cases it might be relevant to show the background content before showing the bottomSheet
   | contentHeightWhenKeyboardIsVisible = { takeUpAllAvailableSpace?: boolean; resizeHeightTrigger?: number; resizeHeight?: number; offset?: number } | object | manipulate the content height when keyboard is visible

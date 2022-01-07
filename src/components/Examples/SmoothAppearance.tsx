@@ -91,10 +91,10 @@ const SmoothAppearance: React.FC = () => {
         </SnapEffect>
       </Animated.ScrollView>
       <BottomSheet
-        safeAreaToContent={16}
+        pressableSafeAreaToContent={16}
         webBoxShadow={{
-          offset: -3,
-          opacity: 0.3,
+          offset: 10,
+          opacity: 0.65,
         }}
         smoothAppearance={{
           waitForContent: true,
