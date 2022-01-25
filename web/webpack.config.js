@@ -59,7 +59,7 @@ module.exports = {
     path: outputPath,
     filename: 'javascript/[name].[contenthash].bundle.js',
     chunkFilename: 'javascript/lib-[name]-[chunkhash].bundle.js',
-    publicPath: '/',
+    publicPath: './',
     crossOriginLoading: 'anonymous',
   },
   plugins: [
