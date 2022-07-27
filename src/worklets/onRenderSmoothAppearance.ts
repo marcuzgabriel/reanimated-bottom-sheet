@@ -1,5 +1,5 @@
 import Animated, { withSpring } from 'react-native-reanimated';
-import { DEFAULT_SPRING_CONFIG } from '../constants/animations';
+import { DEFAULT_SPRING_CONFIG, DEFAULT_SPRING_VALUE_OUTCOME } from '../constants/animations';
 
 interface OnRenderSmoothTransitionParams {
   headerHeight: Animated.SharedValue<number>;
@@ -22,19 +22,21 @@ export const onRenderSmoothAppearance = ({
     ? headerHeight.value > 0 && contentHeight.value > 0
     : headerHeight.value > 0;
 
-  if (areMeasuresCalculated) {
-    if (!isSmoothAppearanceAnimationRunning.value) {
-      if (smoothAppearanceClock.value > 0) {
-        smoothAppearanceClock.value = 0;
-      }
+  if (areMeasuresCalculated && !isSmoothAppearanceAnimationRunning.value) {
+    if (smoothAppearanceClock.value > 0) {
+      smoothAppearanceClock.value = 0;
+    }
 
-      isSmoothAppearanceAnimationRunning.value = true;
+    isSmoothAppearanceAnimationRunning.value = true;
 
-      smoothAppearanceClock.value = withSpring(20, DEFAULT_SPRING_CONFIG, isAnimationDone => {
+    smoothAppearanceClock.value = withSpring(
+      DEFAULT_SPRING_VALUE_OUTCOME,
+      DEFAULT_SPRING_CONFIG,
+      isAnimationDone => {
         if (isAnimationDone) {
           isSmoothAppearanceAnimationRunning.value = false;
         }
-      });
-    }
+      },
+    );
   }
 };

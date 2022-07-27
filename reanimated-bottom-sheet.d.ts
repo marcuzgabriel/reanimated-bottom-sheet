@@ -1,4 +1,4 @@
-// Project: https://github.com/marcuzgabriel/reanimated-animation-library
+// Project: https://github.com/marcuzgabriel/reanimated-bottom-sheet
 // Typescript Version: 3.7.4
 
 declare module '@marcuzgabriel/reanimated-bottom-sheet' {
@@ -48,6 +48,14 @@ declare module '@marcuzgabriel/reanimated-bottom-sheet' {
     };
     snapEffectDirection?: Animated.SharedValue<string>;
     snapPointBottom: number;
+    springConfig?: {
+      damping?: number;
+      mass?: number;
+      stiffness?: number;
+      overshootClamping?: boolean;
+      restSpeedThreshold?: number;
+      restDisplacementThreshold?: number;
+    };
     extraOffset?: number;
     borderTopRightRadius?: number;
     borderTopLeftRadius?: number;

@@ -1,7 +1,18 @@
 import React from 'react';
 import { ScrollViewProps as ScrollViewNativeProps } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { GestureEvent, PanGestureHandlerEventPayload } from 'react-native-gesture-handler';
+import { SimultaneousGesture } from 'react-native-gesture-handler';
+import { GProps, LinearGradientProps } from 'react-native-svg';
+
+interface Children {
+  children?: React.ReactNode;
+}
+
+/* NOTE: Typescript fix for react-native-svg */
+export type GWithChildrenProps = GProps & { children?: React.ReactNode };
+export type LinearGradientWithChildrenProps = LinearGradientProps & {
+  children?: React.ReactNode;
+};
 
 export interface ScrollArrows {
   isEnabled: boolean;
@@ -63,6 +74,14 @@ export interface BottomSheetConfiguration {
   scrollArrowTopComponent?: React.ReactNode;
   scrollArrowBottomComponent?: React.ReactNode;
   scrollArrows?: ScrollArrows;
+  springConfig?: {
+    damping?: number;
+    mass?: number;
+    stiffness?: number;
+    overshootClamping?: boolean;
+    restSpeedThreshold?: number;
+    restDisplacementThreshold?: number;
+  };
   extraSnapPointBottomOffset?: number;
   keyboardAvoidBottomMargin?: number;
   maxHeightRatio?: number;
@@ -168,6 +187,7 @@ interface ScrollViewProps extends ScrollViewNativeProps {
   onContentSizeChange?: (width: number, height: number) => void;
   onIsInputFieldFocusedRequest?: (status: boolean, availableHeight: number) => void;
   children: React.ReactNode;
+  gesture?: SimultaneousGesture;
   isKeyboardAvoidDisabled?: boolean;
   keyboardAvoidBottomMargin?: number;
   connectScrollViewMeasuresToAnimationValues?: Record<

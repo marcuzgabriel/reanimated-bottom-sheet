@@ -1,11 +1,11 @@
-import Animated, { withSpring } from 'react-native-reanimated';
-import { scrollToPosition } from '../helpers';
-import { DEFAULT_SPRING_CONFIG } from '../constants/animations';
+import Animated from 'react-native-reanimated';
+import { onResetCardAndSlideToTopOrBottom } from './onResetCardAndSlideToTopOrBottom';
 import type { ContextPropsBottomSheet, BottomSheetConfiguration } from '../types';
 
 type UnionContextPropsBottomSheetTypes = 'scrollViewRef' | 'scrollY' | 'translationY';
 type UnionBottomSheetConfigurationTypes =
   | 'snapEffectDirection'
+  | 'springConfig'
   | 'closeBottomSheetRequest'
   | 'openBottomSheetRequest';
 
@@ -19,48 +19,6 @@ type OnOpenOrCloseCardRequestParams = Pick<
     isCardCollapsed: Animated.SharedValue<boolean>;
   };
 
-type ResetCardAndSlideToTopOrBottomParams = Omit<
-  OnOpenOrCloseCardRequestParams,
-  'closeBottomSheetRequest' | 'openBottomSheetRequest'
-> & {
-  slideDirection: string;
-};
-
-const resetCardAndSlideToTopOrBottom = ({
-  snapEffectDirection,
-  scrollViewRef,
-  scrollY,
-  slideDirection,
-  isAnimationRunning,
-  isCardCollapsed,
-  translationY,
-  snapPointBottom,
-}: ResetCardAndSlideToTopOrBottomParams): void => {
-  'worklet';
-
-  if (snapEffectDirection) {
-    snapEffectDirection.value = '';
-  }
-
-  if (scrollViewRef?.current && scrollY.value > 0) {
-    scrollToPosition({ ref: scrollViewRef, to: 'top' });
-  }
-
-  isAnimationRunning.value = true;
-
-  translationY.value = withSpring(
-    slideDirection === 'bottom' ? snapPointBottom : 0,
-    DEFAULT_SPRING_CONFIG,
-    isAnimationDone => {
-      if (isAnimationDone) {
-        isAnimationRunning.value = false;
-      }
-    },
-  );
-
-  isCardCollapsed.value = slideDirection === 'bottom';
-};
-
 export const onOpenOrCloseCardRequest = ({
   closeBottomSheetRequest,
   openBottomSheetRequest,
@@ -71,7 +29,7 @@ export const onOpenOrCloseCardRequest = ({
 
   if (closeBottomSheetRequest?.isEnabled && !isCardCollapsed.value) {
     closeBottomSheetRequest.callback(() => {
-      resetCardAndSlideToTopOrBottom({
+      onResetCardAndSlideToTopOrBottom({
         ...rest,
         isCardCollapsed,
         slideDirection: 'bottom',
@@ -79,7 +37,7 @@ export const onOpenOrCloseCardRequest = ({
     });
   } else if (openBottomSheetRequest?.isEnabled && isCardCollapsed.value) {
     openBottomSheetRequest.callback(() => {
-      resetCardAndSlideToTopOrBottom({
+      onResetCardAndSlideToTopOrBottom({
         ...rest,
         isCardCollapsed,
         slideDirection: 'top',

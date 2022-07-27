@@ -1,6 +1,5 @@
 import React, { useCallback, useContext } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import styled from 'styled-components/native';
 import Animated, { useAnimatedStyle, interpolate, useDerivedValue } from 'react-native-reanimated';
 import { HIDE_CONTENT_OUTPUT_RANGE } from '../../../constants/animations';
 import { ReusablePropsContext } from '../../../containers/ReusablePropsProvider';

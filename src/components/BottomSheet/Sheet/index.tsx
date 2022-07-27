@@ -1,31 +1,25 @@
-import React, { useRef, useContext, useCallback } from 'react';
-import { LayoutChangeEvent, ViewStyle, Keyboard } from 'react-native';
+import React, { useMemo, useContext, useCallback } from 'react';
+import { LayoutChangeEvent, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import Animated, {
-  AnimatedStyleProp,
   useSharedValue,
   useAnimatedStyle,
   useAnimatedReaction,
   useDerivedValue,
   useAnimatedRef,
-  useAnimatedGestureHandler,
   runOnJS,
   interpolate,
 } from 'react-native-reanimated';
-import {
-  PanGestureHandlerGestureEvent,
-  PanGestureHandler,
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
+import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { DEFAULT_BORDER_RADIUS } from '../../../constants/styles';
-import { HIDE_CONTENT_OUTPUT_RANGE } from '../../../constants/animations';
+import { DEFAULT_SPRING_CONFIG, HIDE_CONTENT_OUTPUT_RANGE } from '../../../constants/animations';
 import {
   getAnimatedCardStyles,
+  getGestures,
   onInitializationCloseRequest,
   onOuterScrollReaction,
   onActionRequestCloseOrOpenCard,
-  onGestureHandlerCard,
-  onSnapHideContentOrFooterReaction,
+  onGestureHideContentOrFooterReaction,
 } from '../../../worklets';
 import { ReusablePropsContext } from '../../../containers/ReusablePropsProvider';
 import { UserConfigurationContext } from '../../../containers/UserConfigurationProvider';
@@ -34,12 +28,6 @@ import Content from '../Content';
 import Header from '../Header';
 import Footer from '../Footer';
 import SmoothAppearance from '../SmoothAppearance';
-
-interface AnimatedGHContext {
-  [key: string]: number;
-  startX: number;
-  startY: number;
-}
 
 const View = styled.View`
   position: absolute;
@@ -53,10 +41,9 @@ const View = styled.View`
 const AnimatedContent = Animated.View;
 
 const Sheet: React.FC = () => {
-  const panGestureOuterRef = useRef<PanGestureHandler>();
-
   const {
     scrollY: innerScrollY,
+    scrollViewRef,
     cardHeight,
     translationY,
     isInputFieldFocused,
@@ -77,6 +64,7 @@ const Sheet: React.FC = () => {
     extraSnapPointBottomOffset,
     backgroundColor,
     snapEffectDirection,
+    springConfig,
     contentComponent,
     initializeBottomSheetAsClosed,
     isBottomSheetInactive,
@@ -94,12 +82,15 @@ const Sheet: React.FC = () => {
   const isPanning = useSharedValue(false);
   const isPanningDown = useSharedValue(false);
   const isAnimationRunning = useSharedValue(false);
+  const isScrollable = useSharedValue(false);
   const isScrollingUp = useSharedValue(false);
   const isScrollingDown = useSharedValue(false);
   const isScrollingCard = useSharedValue(false);
   const isCardCollapsed = useSharedValue(false);
   const isInitializedAsClosed = useSharedValue(false);
+  const scrollOffset = useSharedValue(0);
   const hideContentInterpolation = useSharedValue(0);
+  const startY = useSharedValue(0);
   const prevDragY = useSharedValue(0);
   const dragY = useSharedValue(0);
 
@@ -108,6 +99,10 @@ const Sheet: React.FC = () => {
   const derivedBackgroundColor = backgroundColor ?? 'lightgrey';
   const hasSmoothAppearance = typeof smoothAppearance?.waitForContent === 'boolean';
   const { emptyContentHeight } = smoothAppearance ?? {};
+  const derivedSpringConfig = useMemo(
+    () => ({ ...DEFAULT_SPRING_CONFIG, ...(springConfig ?? {}) }),
+    [springConfig],
+  );
 
   const snapPointBottom = useDerivedValue(() => {
     const extraSnapPointOffset = extraSnapPointBottomOffset ?? 0;
@@ -133,6 +128,7 @@ const Sheet: React.FC = () => {
           isAnimationRunning,
           isCardCollapsed,
           snapPointBottom,
+          springConfig: derivedSpringConfig,
           direction,
         });
       }
@@ -143,6 +139,7 @@ const Sheet: React.FC = () => {
       isCardCollapsed,
       isAnimationRunning,
       snapPointBottom,
+      derivedSpringConfig,
       translationY,
     ],
   );
@@ -166,8 +163,9 @@ const Sheet: React.FC = () => {
     [cardHeight, isMounted, onLayoutRequest],
   );
 
-  const gestureHandlerProps = {
+  const gestureHandlerParams = {
     isInputFieldFocused,
+    isScrollable,
     isScrollingCard,
     isPanning,
     isPanningDown,
@@ -176,31 +174,30 @@ const Sheet: React.FC = () => {
     prevDragY,
     dragY,
     translationY,
+    scrollOffset,
+    scrollViewRef,
     snapPointBottom,
+    springConfig: derivedSpringConfig,
+    startY,
     innerScrollY,
   };
 
-  const gestureHandlerHeader = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    AnimatedGHContext
-  >(
-    onGestureHandlerCard({
-      ...gestureHandlerProps,
-      type: 'header',
-    }),
-    [cardHeight],
-  );
-
-  const gestureHandlerContent = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    AnimatedGHContext
-  >(
-    onGestureHandlerCard({
-      ...gestureHandlerProps,
-      type: 'content',
-    }),
-    [cardHeight],
-  );
+  const closeOrOpenRequestCallbackParams = {
+    hasCloseOrOpenRequest,
+    measureRef,
+    isMounted,
+    isCardCollapsed,
+    isAnimationRunning,
+    extraSnapPointBottomOffset,
+    snapEffectDirection,
+    openBottomSheetRequest,
+    closeBottomSheetRequest,
+    scrollViewRef,
+    translationY,
+    snapPointBottom: configSnapPointBottom,
+    springConfig: derivedSpringConfig,
+    scrollY: innerScrollY,
+  };
 
   /* Panning direction reaction */
   useAnimatedReaction(
@@ -220,7 +217,7 @@ const Sheet: React.FC = () => {
         const hideContentOffset = hideContentOnCardCollapse?.offset ?? 0;
         const hideFooterOffset = hideFooterOnCardCollapse?.offset ?? 0;
 
-        onSnapHideContentOrFooterReaction({
+        onGestureHideContentOrFooterReaction({
           result,
           snapPointBottom,
           hideContentInterpolation,
@@ -260,6 +257,7 @@ const Sheet: React.FC = () => {
           isAnimationRunning,
           translationY,
           snapPointBottom,
+          springConfig: derivedSpringConfig,
           outerScrollEvent,
         });
       }
@@ -277,6 +275,7 @@ const Sheet: React.FC = () => {
           isAnimationRunning,
           isInitializedAsClosed,
           snapEffectDirection,
+          springConfig: derivedSpringConfig,
           translationY,
           snapPointBottom,
         });
@@ -285,27 +284,26 @@ const Sheet: React.FC = () => {
     [snapPointBottom, initializeBottomSheetAsClosed],
   );
 
-  const animatedBottomSheetStyle = useAnimatedStyle(
-    (): AnimatedStyleProp<ViewStyle> =>
-      getAnimatedCardStyles({
-        translationY: hasSmoothAppearance
-          ? interpolate(
-              smoothAppearanceClock.value,
-              [0, 20],
-              [emptyContentHeight ?? 0, translationY.value],
-            )
-          : translationY.value,
-        borderTopLeftRadius,
-        borderTopRightRadius,
-        backgroundColor: derivedBackgroundColor,
-      }),
+  const animatedBottomSheetStyle = useAnimatedStyle(() =>
+    getAnimatedCardStyles({
+      translationY: hasSmoothAppearance
+        ? interpolate(
+            smoothAppearanceClock.value,
+            [0, 20],
+            [emptyContentHeight ?? 0, translationY.value],
+          )
+        : translationY.value,
+      borderTopLeftRadius,
+      borderTopRightRadius,
+      backgroundColor: derivedBackgroundColor,
+    }),
   );
 
   const animatedStyleHeader = useAnimatedStyle(() => ({
     zIndex: 1,
   }));
 
-  const animatedContentStyle = useAnimatedStyle((): AnimatedStyleProp<ViewStyle> => {
+  const animatedContentStyle = useAnimatedStyle(() => {
     if (hideContentOnCardCollapse?.isEnabled) {
       return {
         opacity: interpolate(
@@ -315,16 +313,16 @@ const Sheet: React.FC = () => {
         ),
       };
     }
+
     return {};
   }, [hideContentInterpolation]);
 
   /* NOTE: Handler for open and close request */
-  useCloseOrOpenRequestCallback({
-    hasCloseOrOpenRequest,
-    measureRef,
-    isMounted,
-    isCardCollapsed,
-    isAnimationRunning,
+  useCloseOrOpenRequestCallback(closeOrOpenRequestCallbackParams);
+
+  const { panGestureHeader, panGestureContent, scrollViewNativeGesture } = getGestures({
+    gestureHandlerParams,
+    isBottomSheetInactive,
   });
 
   return (
@@ -333,11 +331,7 @@ const Sheet: React.FC = () => {
         <Animated.View ref={measureRef} onLayout={onLayout} style={animatedBottomSheetStyle}>
           <SmoothAppearance>
             <GestureHandlerRootView>
-              <PanGestureHandler
-                enabled={!isBottomSheetInactive}
-                ref={panGestureOuterRef}
-                onGestureEvent={gestureHandlerHeader}
-              >
+              <GestureDetector gesture={panGestureHeader}>
                 <Animated.View style={animatedStyleHeader}>
                   <Header
                     scrollY={outerScrollEvent?.scrollY}
@@ -347,9 +341,14 @@ const Sheet: React.FC = () => {
                     }
                   />
                 </Animated.View>
-              </PanGestureHandler>
+              </GestureDetector>
               <AnimatedContent style={animatedContentStyle}>
-                <Content gestureHandler={gestureHandlerContent} isScrollingCard={isScrollingCard}>
+                <Content
+                  isScrollable={isScrollable}
+                  isScrollingCard={isScrollingCard}
+                  scrollOffset={scrollOffset}
+                  contentGesture={Gesture.Simultaneous(panGestureContent, scrollViewNativeGesture)}
+                >
                   {contentComponent}
                 </Content>
               </AnimatedContent>

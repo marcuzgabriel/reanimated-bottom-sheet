@@ -7,11 +7,9 @@ interface GetAnimatedMeasureProps {
 }
 
 export const getAnimatedMeasures = ({ ref, callback }: GetAnimatedMeasureProps): void => {
-  ref.current.measure(
-    (x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-      if (width > 0) {
-        callback({ width, height, x, y });
-      }
-    },
-  );
+  ref.current.measure((x: number, y: number, width: number, height: number) => {
+    if (width > 0) {
+      callback({ width, height, x, y });
+    }
+  });
 };
