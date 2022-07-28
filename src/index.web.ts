@@ -1,13 +1,19 @@
 import { AppRegistry } from 'react-native';
 import App from '.';
 
-const globalAny: any = global;
-const rootTag = globalAny.document.getElementById('root');
+const rootTag = global.document.getElementById('root');
 
-const mount = (tag: any): void => {
+interface WebappRootTag {
+  __webappRootTag?: typeof rootTag;
+  document: typeof global.document;
+}
+
+const globalAny: WebappRootTag = global;
+
+const mount = (tag: typeof rootTag): void => {
   globalAny.__webappRootTag = tag;
-  AppRegistry.registerComponent('react-native-ultimate-bottom-sheet', () => App);
-  AppRegistry.runApplication('react-native-ultimate-bottom-sheet', {
+  AppRegistry.registerComponent('reanimated-animation-library', () => App);
+  AppRegistry.runApplication('reanimated-animation-library', {
     rootTag: tag,
   });
 };

@@ -77,8 +77,6 @@ const SnapEffect: React.FC<Props> = ({
         const isCardOverlappingContent = result.contentHeight.value > availableAreaBeforeOverlap;
 
         return onSnappableReaction({
-          result,
-          previous,
           windowHeight,
           contentHeight,
           isSnapEffectActiveState,
