@@ -1,7 +1,7 @@
 {
   "name": "@marcuzgabriel/reanimated-bottom-sheet",
   "author": "Marcuz Gabriel Larsen <marcuzgabriel@gmail.com>",
-  "version": "1.0.9",
+  "version": "1.0.3",
   "license": "MIT",
   "scripts": {
     "android": "react-native run-android",
